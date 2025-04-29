@@ -8,9 +8,9 @@
  "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "letter_head": "KIKC",
+ "letter_head": null,
  "letterhead": null,
- "modified": "2025-04-29 10:24:02.804308",
+ "modified": "2025-04-29 13:55:30.435079",
  "modified_by": "Administrator",
  "module": "HRMS Indonesia",
  "name": "Salary Register Employee",
@@ -20,9 +20,6 @@
  "report_name": "Salary Register Employee",
  "report_type": "Script Report",
  "roles": [
-  {
-   "role": "HR User"
-  },
   {
    "role": "HR Manager"
   }
