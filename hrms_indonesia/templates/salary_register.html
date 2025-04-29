@@ -41,6 +41,10 @@
     th, td {
         text-align: center;
     }
+
+    .right-align {
+        text-align: right;
+    }
 </style>
 
 <p style="font-size: 10px; text-decoration: underline;" id="date-time"></p>
@@ -52,54 +56,54 @@
     <table>
         <thead>
             <tr>
-                {% for key in data[0].keys() %}
-                    <th>{{ key | replace('_', ' ') | capitalize }}</th>
+                {% for column in columns %}
+                    <th>{{ column.label }}</th>
                 {% endfor %}
             </tr>
         </thead>
         <tbody>
-            <tr>
-                {% for row in data %}
+            {% for row in data %}
+                {% if row is mapping %}
                     <tr>
-                            <td>{{ row[column.fieldname] }}</td>
-                        <!-- {% endfor %} -->
+                        {% for column in columns %}
+                            {% set value = row[column.fieldname] %}
+                            {% set numeric = value|float(default=0) %}
+                            <td class="{% if numeric != 0 %}right-align{% endif %}">
+                                {% if value is not none %}
+                                    {% if numeric >= 1000 %}
+                                        {{ frappe.utils.fmt_money(numeric, currency="Rp.") }}
+                                    {% else %}
+                                        {{ value }}
+                                    {% endif %}
+                                {% else %}
+                                    
+                                {% endif %}
+                            </td>
+                        {% endfor %}
                     </tr>
-                {% endfor %}
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr>
-                {% for value in data[1] %}
-                    <td class="{% if value is number %}right-align{% endif %}">
-                        {{ value }}
-                    </td>  
-                {% endfor %}
-            </tr>
-        </tfoot>
-        
-        <script>
-            // Menjalankan script setelah halaman dimuat
-            window.onload = function() {
-                let total = 0;
-                // Menemukan semua cell dengan kelas 'right-align'
-                let cells = document.querySelectorAll('.right-align');
                 
-                // Loop melalui setiap cell dan tambahkan nilainya jika berupa angka
-                cells.forEach(cell => {
-                    let value = parseFloat(cell.textContent.trim());
-                    if (!isNaN(value)) {
-                        total += value;
-                    }
-                });
-        
-                // Menampilkan total pada elemen dengan id 'total'
-                document.getElementById('total').textContent = total.toFixed(2);  // Sesuaikan format jika diperlukan
-            }
-        </script>
+                    {% elif loop.index == data|length %}
+                        <tr>
+                            {% for value in row %}
+                                {% set numeric = value|float(default=0) %}
+                                <td class="right-align">
+                                    {% if numeric >= 1000 %}
+                                        {{ frappe.utils.fmt_money(numeric, currency="Rp.") }}
+                                    {% else %}
+                                        {{ value }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    
+                    {% endif %}
+            {% endfor %}
+        </tbody>        
+
         
     </table>
 
-    <div style="font-size: 11px; margin-top: 10px; font-weight: bold;">Total Jumlah Pegawai : {{ data.length }}</div>
+    <div style="font-size: 10px; margin-top: 10px; font-weight: bold;">Total Jumlah Pegawai : {{ data|length - 1 }}</div>
     <table style="width: 50%; margin-top: 10px; border: none;">
         <tr>
             <td style="border: none; ">

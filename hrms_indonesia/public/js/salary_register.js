@@ -165,14 +165,14 @@ frappe.views.QueryReport.prototype.get_menu_items = function () {
         action: () =>
           frappe.set_route("List", "User Permission", {
             doctype: "Report",
-            name: this.report_name,
+            name: this.report2_name,
           }),
         condition: () => frappe.user.has_role("System Manager"),
         standard: true,
       },
     ];
   
-    if (this.report_name === 'Salary Register') {
+    if (this.report_name === 'Salary Register Employee') {
       items.push({
         label: __("Print Salary Register"),
         action: () => {
