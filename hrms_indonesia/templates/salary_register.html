@@ -1,0 +1,159 @@
+<style type="text/css">
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 20mm;
+        }
+    }
+
+    .title {
+        text-align: center;
+        font-family: sans-serif;
+        font-size: 16px;
+        font-style: normal;
+        transform: scaleX(1.00213);
+        text-decoration: underline;
+    }
+
+    .period-text {
+        text-align: center;
+        font-family: sans-serif;
+        font-size: 14px;
+        transform: scaleX(0.893309);
+    }
+
+    .report-container {
+        gap: 1em;
+        font-family: sans-serif;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse; /* Menyebabkan border tidak tumpang tindih */
+    }
+
+    th, td {
+        border: 1px solid black; /* Menambahkan border pada tabel dan sel */
+        font-size: 7px;
+        padding: 2px !important;
+    }
+
+    th, td {
+        text-align: center;
+    }
+
+    .right-align {
+        text-align: right;
+    }
+</style>
+
+<p style="font-size: 10px; text-decoration: underline;" id="date-time"></p>
+<p style="font-size: 10px;" >{{ filters.company }}</p>
+
+<h3 class="title">Daftar Gaji Karyawan {{ filters.company }}</h3>
+<h3 class="period-text">Periode : {{ filters.from_date }} - {{ filters.to_date }}</h3>
+<div class="report-container">
+    <table>
+        <thead>
+            <tr>
+                {% for column in columns %}
+                    <th>{{ column.label }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+                {% if row is mapping %}
+                    <tr>
+                        {% for column in columns %}
+                            {% set value = row[column.fieldname] %}
+                            {% set numeric = value|float(default=0) %}
+                            <td class="{% if numeric != 0 %}right-align{% endif %}">
+                                {% if value is not none %}
+                                    {% if numeric >= 1000 %}
+                                        {{ frappe.utils.fmt_money(numeric, currency="Rp.") }}
+                                    {% else %}
+                                        {{ value }}
+                                    {% endif %}
+                                {% else %}
+                                    
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                
+                    {% elif loop.index == data|length %}
+                        <tr>
+                            {% for value in row %}
+                                {% set numeric = value|float(default=0) %}
+                                <td class="right-align">
+                                    {% if numeric >= 1000 %}
+                                        {{ frappe.utils.fmt_money(numeric, currency="Rp.") }}
+                                    {% else %}
+                                        {{ value }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    
+                    {% endif %}
+            {% endfor %}
+        </tbody>        
+
+        
+    </table>
+
+    <div style="font-size: 10px; margin-top: 10px; font-weight: bold;">Total Jumlah Pegawai : {{ data|length - 1 }}</div>
+    <table style="width: 50%; margin-top: 10px; border: none;">
+        <tr>
+            <td style="border: none; ">
+                <table style="border: none; ">
+                    <tr><td style="border: none; text-align: left;">Menyetujui</td></tr>
+                    <tr><td style="height: 60px; border: none; "></td></tr>
+                    <tr><td style="border: none; text-align: left; font-weight: bold;">RACHMAT HAMDANI</td></tr>
+                    <tr><td style="border: none; text-align: left;">Direktur Utama</td></tr>
+                </table>
+            </td>
+            <td style="border: none;">
+                <table style="border: none;">
+                    <tr><td style="border: none; text-align: left;">Mengetahui</td></tr>
+                    <tr><td style="height: 60px; border: none; text-align: left;"></td></tr>
+                    <tr><td style="border: none; text-align: left; font-weight: bold;">DIAN RISDIANA</td></tr>
+                    <tr><td style="border: none; text-align: left;">Direktur Keuangan</td></tr>
+                </table>
+            </td>
+            <td style="border: none;">
+                <table style="border: none;">
+                    <tr><td style="border: none; text-align: left;">Cikampek</td></tr>
+                    <tr><td style="height: 60px; border: none; text-align: left;"></td></tr>
+                    <tr><td style="border: none; text-align: left; font-weight: bold;">RAHADIAN TIKIE R</td></tr>
+                    <tr><td style="border: none; text-align: left;">Manager SDMU</td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    
+    <script>
+        // Mendapatkan tanggal dan waktu saat ini
+        let currentDate = new Date();
+        
+        // Format tanggal (DD/MM/YYYY)
+        let day = currentDate.getDate();
+        let month = currentDate.getMonth() + 1; // Bulan dimulai dari 0, jadi tambahkan 1
+        let year = currentDate.getFullYear();
+        
+        // Format waktu (HH:MM:SS)
+        let hours = currentDate.getHours();
+        let minutes = currentDate.getMinutes();
+        let seconds = currentDate.getSeconds();
+        
+        // Menambahkan angka 0 jika jam, menit, atau detik kurang dari 10
+        hours = hours < 10 ? '0' + hours : hours;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+    
+        // Menampilkan tanggal dan waktu di dalam elemen <p>
+        document.getElementById("date-time").innerHTML = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    </script>
+    
+</div>
