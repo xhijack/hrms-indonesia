@@ -20,6 +20,7 @@ app_license = "mit"
 # 		"has_permission": "hrms_indonesia.api.permission.has_app_permission"
 # 	}
 # ]
+fixtures = ["Report"]
 
 # Includes in <head>
 # ------------------
