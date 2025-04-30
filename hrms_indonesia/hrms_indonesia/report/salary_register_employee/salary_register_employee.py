@@ -36,9 +36,11 @@ def execute(filters=None):
 
 	data = []
 	for ss in salary_slips:
+		employee_number = frappe.db.get_value("Employee", ss.employee, "employee_number")
+
 		row = {
 			"salary_slip_id": ss.name,
-			"employee": ss.employee,
+			"employee": employee_number,
 			"employee_name": ss.employee_name,
 			"data_of_joining": doj_map.get(ss.employee),
 			"branch": ss.branch,
@@ -113,10 +115,9 @@ def get_columns(earning_types, ded_types):
 			"width": 150,
 		},
 		{
-			"label": _("Employee"),
+			"label": _("Employee Number"),
 			"fieldname": "employee",
-			"fieldtype": "Link",
-			"options": "Employee",
+			"fieldtype": "Data",
 			"width": 120,
 		},
 		{
@@ -130,52 +131,6 @@ def get_columns(earning_types, ded_types):
 			"fieldname": "grade",
 			"fieldtype": "Link",
 			"options": "Employee Grade",
-			"width": 80,
-		},
-		{
-			"label": _("Date of Joining"),
-			"fieldname": "data_of_joining",
-			"fieldtype": "Date",
-			"width": 80,
-		},
-		{
-			"label": _("Branch"),
-			"fieldname": "branch",
-			"fieldtype": "Link",
-			"options": "Branch",
-			"width": -1,
-		},
-		{
-			"label": _("Department"),
-			"fieldname": "department",
-			"fieldtype": "Link",
-			"options": "Department",
-			"width": -1,
-		},
-		{
-			"label": _("Designation"),
-			"fieldname": "designation",
-			"fieldtype": "Link",
-			"options": "Designation",
-			"width": 120,
-		},
-		{
-			"label": _("Company"),
-			"fieldname": "company",
-			"fieldtype": "Link",
-			"options": "Company",
-			"width": 120,
-		},
-		{
-			"label": _("Start Date"),
-			"fieldname": "start_date",
-			"fieldtype": "Data",
-			"width": 80,
-		},
-		{
-			"label": _("End Date"),
-			"fieldname": "end_date",
-			"fieldtype": "Data",
 			"width": 80,
 		},
 		{
@@ -252,13 +207,6 @@ def get_columns(earning_types, ded_types):
 				"fieldtype": "Currency",
 				"options": "currency",
 				"width": 120,
-			},
-			{
-				"label": _("Currency"),
-				"fieldtype": "Data",
-				"fieldname": "currency",
-				"options": "Currency",
-				"hidden": 1,
 			},
 		]
 	)
