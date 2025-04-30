@@ -126,31 +126,31 @@ def get_columns(earning_types, ded_types):
 			"fieldtype": "Data",
 			"width": 140,
 		},
-		{
-			"label": _("Grade"),
-			"fieldname": "grade",
-			"fieldtype": "Link",
-			"options": "Employee Grade",
-			"width": 80,
-		},
-		{
-			"label": _("Leave Without Pay"),
-			"fieldname": "leave_without_pay",
-			"fieldtype": "Float",
-			"width": 50,
-		},
-		{
-			"label": _("Absent Days"),
-			"fieldname": "absent_days",
-			"fieldtype": "Float",
-			"width": 50,
-		},
-		{
-			"label": _("Payment Days"),
-			"fieldname": "payment_days",
-			"fieldtype": "Float",
-			"width": 120,
-		},
+		# {
+		# 	"label": _("Grade"),
+		# 	"fieldname": "grade",
+		# 	"fieldtype": "Link",
+		# 	"options": "Employee Grade",
+		# 	"width": 80,
+		# },
+		# {
+		# 	"label": _("Leave Without Pay"),
+		# 	"fieldname": "leave_without_pay",
+		# 	"fieldtype": "Float",
+		# 	"width": 50,
+		# },
+		# {
+		# 	"label": _("Absent Days"),
+		# 	"fieldname": "absent_days",
+		# 	"fieldtype": "Float",
+		# 	"width": 50,
+		# },
+		# {
+		# 	"label": _("Payment Days"),
+		# 	"fieldname": "payment_days",
+		# 	"fieldtype": "Float",
+		# 	"width": 120,
+		# },
 	]
 
 	for earning in earning_types:
