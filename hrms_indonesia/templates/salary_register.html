@@ -9,7 +9,7 @@
     .title {
         text-align: center;
         font-family: sans-serif;
-        font-size: 16px;
+        font-size: 14px;
         font-style: normal;
         transform: scaleX(1.00213);
         text-decoration: underline;
@@ -18,7 +18,7 @@
     .period-text {
         text-align: center;
         font-family: sans-serif;
-        font-size: 14px;
+        font-size: 12px;
         transform: scaleX(0.893309);
     }
 
@@ -29,13 +29,13 @@
 
     table {
         width: 100%;
-        border-collapse: collapse; /* Menyebabkan border tidak tumpang tindih */
+        border-collapse: collapse;
     }
 
     th, td {
-        border: 1px solid black; /* Menambahkan border pada tabel dan sel */
+        border: 1px solid black;
         font-size: 7px;
-        padding: 2px !important;
+        padding: 1px !important;
     }
 
     th, td {
@@ -68,7 +68,7 @@
                         {% for column in columns %}
                             {% set value = row[column.fieldname] %}
                             {% set numeric = value|float(default=0) %}
-                            <td class="{% if numeric != 0 %}right-align{% endif %}">
+                            <td class="{% if column.fieldtype in ['Currency', 'Float', 'Int'] %}right-align{% endif %}">
                                 {% if value is not none %}
                                     {% if numeric >= 1000 %}
                                         {{ frappe.utils.fmt_money(numeric, currency="Rp.") }}
@@ -99,7 +99,6 @@
                     {% endif %}
             {% endfor %}
         </tbody>        
-
         
     </table>
 

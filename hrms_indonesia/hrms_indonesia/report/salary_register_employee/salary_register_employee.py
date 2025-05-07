@@ -26,7 +26,7 @@ def execute(filters=None):
 	if not salary_slips:
 		return [], []
 
-	earning_types, ded_types = get_earning_and_deduction_types(salary_slips)
+	earning_types, ded_types = get_earning_and_deduction_types(salary_slips, filters.get("salary_structure"))
 	columns = get_columns(earning_types, ded_types)
 
 	ss_earning_map = get_salary_slip_details(salary_slips, currency, company_currency, "earnings")
@@ -57,13 +57,13 @@ def execute(filters=None):
 			"total_loan_repayment": ss.total_loan_repayment,
 		}
 
-		update_column_width(ss, columns)
+		# update_column_width(ss, columns)
 
 		for e in earning_types:
-			row.update({frappe.scrub(e): ss_earning_map.get(ss.name, {}).get(e)})
+			row.update({frappe.scrub(e): ss_earning_map.get(ss.name, {}).get(e, 0.0)})
 
 		for d in ded_types:
-			row.update({frappe.scrub(d): ss_ded_map.get(ss.name, {}).get(d)})
+			row.update({frappe.scrub(d): ss_ded_map.get(ss.name, {}).get(d, 0.0)})
 
 		if currency == company_currency:
 			row.update(
@@ -84,14 +84,14 @@ def execute(filters=None):
 	return columns, data
 
 
-def get_earning_and_deduction_types(salary_slips):
-	salary_component_and_type = {_("Earning"): [], _("Deduction"): []}
+# def get_earning_and_deduction_types(salary_slips):
+# 	salary_component_and_type = {_("Earning"): [], _("Deduction"): []}
 
-	for salary_component in get_salary_components(salary_slips):
-		component_type = get_salary_component_type(salary_component)
-		salary_component_and_type[_(component_type)].append(salary_component)
+# 	for salary_component in get_salary_components(salary_slips):
+# 		component_type = get_salary_component_type(salary_component)
+# 		salary_component_and_type[_(component_type)].append(salary_component)
 
-	return sorted(salary_component_and_type[_("Earning")]), sorted(salary_component_and_type[_("Deduction")])
+# 	return sorted(salary_component_and_type[_("Earning")]), sorted(salary_component_and_type[_("Deduction")])
 
 
 def update_column_width(ss, columns):
@@ -121,7 +121,7 @@ def get_columns(earning_types, ded_types):
 			"width": 120,
 		},
 		{
-			"label": _("Employee Name"),
+			"label": _("NAMA"),
 			"fieldname": "employee_name",
 			"fieldtype": "Data",
 			"width": 140,
@@ -153,38 +153,32 @@ def get_columns(earning_types, ded_types):
 		# },
 	]
 
-	for earning in earning_types:
-		columns.append(
-			{
-				"label": earning,
-				"fieldname": frappe.scrub(earning),
-				"fieldtype": "Currency",
-				"options": "currency",
-				"width": 120,
-			}
-		)
-
-	columns.append(
-		{
-			"label": _("Gross Pay"),
-			"fieldname": "gross_pay",
+	for sc, desc in earning_types.items():
+		columns.append({
+			"label": desc,
+			"fieldname": frappe.scrub(sc),
 			"fieldtype": "Currency",
 			"options": "currency",
-			"width": 120,
-		}
-	)
+			"width": 120
+		})
 
-	for deduction in ded_types:
-		columns.append(
-			{
-				"label": deduction,
-				"fieldname": frappe.scrub(deduction),
-				"fieldtype": "Currency",
-				"options": "currency",
-				"width": 120,
-			}
-		)
+	# columns.append({
+	# 	"label": _("Gross Pay"),
+	# 	"fieldname": "gross_pay",
+	# 	"fieldtype": "Currency",
+	# 	"options": "currency",
+	# 	"width": 120
+	# })
 
+	for sc, desc in ded_types.items():
+		columns.append({
+			"label": desc,
+			"fieldname": frappe.scrub(sc),
+			"fieldtype": "Currency",
+			"options": "currency",
+			"width": 120
+		})
+	
 	columns.extend(
 		[
 			{
@@ -195,14 +189,14 @@ def get_columns(earning_types, ded_types):
 				"width": 120,
 			},
 			{
-				"label": _("Total Deduction"),
+				"label": _("JUMLAH POTONGAN"),
 				"fieldname": "total_deduction",
 				"fieldtype": "Currency",
 				"options": "currency",
 				"width": 120,
 			},
 			{
-				"label": _("Net Pay"),
+				"label": _("GAJI BERSIH"),
 				"fieldname": "net_pay",
 				"fieldtype": "Currency",
 				"options": "currency",
@@ -211,6 +205,50 @@ def get_columns(earning_types, ded_types):
 		]
 	)
 	return columns
+
+def get_earning_and_deduction_types(salary_slips, salary_structure=None):
+	salary_component_and_type = {_("Earning"): {}, _("Deduction"): {}}
+
+	if salary_structure:
+		earning_components = frappe.get_all(
+			"Salary Detail",
+			filters={"parent": salary_structure, "parentfield": "earnings"},
+			fields=["salary_component"],
+			order_by="idx"
+		)
+		deduction_components = frappe.get_all(
+			"Salary Detail",
+			filters={"parent": salary_structure, "parentfield": "deductions"},
+			fields=["salary_component"],
+			order_by="idx"
+		)
+
+		earning_list = [e.salary_component for e in earning_components]
+		deduction_list = [d.salary_component for d in deduction_components]
+
+	else:
+		earning_list = []
+		deduction_list = []
+		for sc in get_salary_components(salary_slips):
+			sc_type = get_salary_component_type(sc)
+			if sc_type == "Earning":
+				earning_list.append(sc)
+			elif sc_type == "Deduction":
+				deduction_list.append(sc)
+
+	# Ambil descriptions
+	descriptions = frappe.get_all(
+		"Salary Component",
+		filters={"name": ["in", earning_list + deduction_list]},
+		fields=["name", "description"]
+	)
+
+	desc_map = {d.name: d.description for d in descriptions}
+
+	salary_component_and_type[_("Earning")] = {e: desc_map.get(e, e) for e in earning_list}
+	salary_component_and_type[_("Deduction")] = {d: desc_map.get(d, d) for d in deduction_list}
+
+	return salary_component_and_type[_("Earning")], salary_component_and_type[_("Deduction")]
 
 
 def get_salary_components(salary_slips):
@@ -228,7 +266,6 @@ def get_salary_component_type(salary_component):
 
 def get_salary_slips(filters, company_currency):
     doc_status = {"Draft": 0, "Submitted": 1, "Cancelled": 2}
-
     salary_slip = frappe.qb.DocType("Salary Slip")
     employee = frappe.qb.DocType("Employee")
 
@@ -258,14 +295,13 @@ def get_salary_slips(filters, company_currency):
         query = query.where(salary_slip.employee == filters.get("employee"))
 
     if filters.get("grade"):
-        query = query.where(employee.grade == filters.get("grade"))  # <=== Tambahkan ini
+        query = query.where(employee.grade == filters.get("grade"))
 
-    if filters.get("currency") and filters.get("currency") != company_currency:
-        query = query.where(salary_slip.currency == filters.get("currency"))
+    if filters.get("salary_structure"):
+        query = query.where(salary_slip.salary_structure == filters.get("salary_structure"))
 
-    salary_slips = query.run(as_dict=1)
+    return query.run(as_dict=True)
 
-    return salary_slips or []
 
 
 def get_employee_doj_map():

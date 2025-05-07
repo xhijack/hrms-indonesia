@@ -55,6 +55,13 @@ frappe.query_reports["Salary Register Employee"] = {
             default: "Submitted",
             width: "100px",
         },
+        {
+            fieldname: "salary_structure",
+            label: __("Salary Structure"),
+            fieldtype: "Link",
+            options: "Salary Structure",
+            width: "100px",
+        },
     ],
     onload: function(report) {
         report.page.add_inner_button(__('Custom Print'), function() {
