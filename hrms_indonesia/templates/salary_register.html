@@ -56,6 +56,7 @@
     <table>
         <thead>
             <tr>
+                <th>No</th>
                 {% for column in columns %}
                     <th>{{ column.label }}</th>
                 {% endfor %}
@@ -65,13 +66,14 @@
             {% for row in data %}
                 {% if row is mapping %}
                     <tr>
+                        <td>{{ loop.index }}</td> 
                         {% for column in columns %}
                             {% set value = row[column.fieldname] %}
                             {% set numeric = value|float(default=0) %}
                             <td class="{% if column.fieldtype in ['Currency', 'Float', 'Int'] %}right-align{% endif %}">
                                 {% if value is not none %}
                                     {% if numeric >= 1000 %}
-                                        {{ frappe.utils.fmt_money(numeric, currency="Rp.") }}
+                                        {{ "{:,.0f}".format(numeric).replace(",", ".") }}
                                     {% else %}
                                         {{ value }}
                                     {% endif %}
@@ -84,16 +86,20 @@
                 
                     {% elif loop.index == data|length %}
                         <tr>
-                            {% for value in row %}
-                                {% set numeric = value|float(default=0) %}
-                                <td class="right-align">
-                                    {% if numeric >= 1000 %}
-                                        {{ frappe.utils.fmt_money(numeric, currency="Rp.") }}
-                                    {% else %}
-                                        {{ value }}
-                                    {% endif %}
-                                </td>
-                            {% endfor %}
+                            <tr>
+                                <td class="right-align" colspan="3">Total</td>
+                                {% for value in row[2:] %}
+                                    {% set numeric = value|float(default=0) %}
+                                    <td class="right-align">
+                                        {% if numeric >= 1000 %}
+                                            {{ "{:,.0f}".format(numeric).replace(",", ".") }}
+                                        {% else %}
+                                            {{ value }}
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            
                         </tr>
                     
                     {% endif %}

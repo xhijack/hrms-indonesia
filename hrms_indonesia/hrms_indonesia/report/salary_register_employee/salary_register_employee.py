@@ -108,23 +108,16 @@ def update_column_width(ss, columns):
 def get_columns(earning_types, ded_types):
 	columns = [
 		{
-			"label": _("Salary Slip ID"),
-			"fieldname": "salary_slip_id",
-			"fieldtype": "Link",
-			"options": "Salary Slip",
-			"width": 150,
-		},
-		{
 			"label": _("Employee Number"),
 			"fieldname": "employee",
 			"fieldtype": "Data",
-			"width": 120,
+			"width": 150,
 		},
 		{
 			"label": _("NAMA"),
 			"fieldname": "employee_name",
 			"fieldtype": "Data",
-			"width": 140,
+			"width": 150,
 		},
 		# {
 		# 	"label": _("Grade"),
@@ -159,7 +152,7 @@ def get_columns(earning_types, ded_types):
 			"fieldname": frappe.scrub(sc),
 			"fieldtype": "Currency",
 			"options": "currency",
-			"width": 120
+			"width": 150
 		})
 
 	# columns.append({
@@ -176,7 +169,7 @@ def get_columns(earning_types, ded_types):
 			"fieldname": frappe.scrub(sc),
 			"fieldtype": "Currency",
 			"options": "currency",
-			"width": 120
+			"width": 150
 		})
 	
 	columns.extend(
@@ -186,21 +179,21 @@ def get_columns(earning_types, ded_types):
 				"fieldname": "total_loan_repayment",
 				"fieldtype": "Currency",
 				"options": "currency",
-				"width": 120,
+				"width": 150,
 			},
 			{
 				"label": _("JUMLAH POTONGAN"),
 				"fieldname": "total_deduction",
 				"fieldtype": "Currency",
 				"options": "currency",
-				"width": 120,
+				"width": 150,
 			},
 			{
 				"label": _("GAJI BERSIH"),
 				"fieldname": "net_pay",
 				"fieldtype": "Currency",
 				"options": "currency",
-				"width": 120,
+				"width": 150,
 			},
 		]
 	)
