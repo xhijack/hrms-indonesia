@@ -277,9 +277,9 @@ def get_salary_slips(filters, company_currency):
 
     if filters.get("from_date"):
         query = query.where(salary_slip.start_date >= filters.get("from_date"))
-	
+
     if filters.get("to_date"):
-        query = query.where(salary_slip.start_date <= filters.get("to_date"))
+        query = query.where(salary_slip.end_date <= filters.get("to_date"))
 
     if filters.get("company"):
         query = query.where(salary_slip.company == filters.get("company"))
