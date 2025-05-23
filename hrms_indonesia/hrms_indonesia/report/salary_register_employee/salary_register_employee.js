@@ -102,13 +102,30 @@ function get_salary_register_data(filters) {
             are_default_filters: false
         },
         callback: (response) => {
-            const columns = response.message.columns || []; // Ensure columns are included
-            console.log("Response from report:", response);
-            console.log("Columns: ", columns); 
+            const columns = response.message.columns || []; 
             const data = response.message.result;
-            console.log("Data: ", data); 
-            const print_context = { columns, filters, report_name, data }; // Add columns to print_context
-            print_salary_register(print_context); // Pass print_context including columns
+            frappe.call({
+                method: 'frappe.client.get_list',
+                args: {
+                    doctype: 'Employee',
+                    fields: ['name', 'employee_name', 'designation'],
+                    filters: [['designation', 'like', '%chief%']],
+                    limit_page_length: 1000
+                },
+                callback: (employeeResponse) => {
+                    const chiefEmployees = employeeResponse.message || [];
+
+                    const print_context = {
+                        columns,
+                        filters,
+                        report_name,
+                        data,
+                        chief_employees: chiefEmployees
+                    };
+
+                    print_salary_register(print_context);
+                }
+            });
         }
     });
 }

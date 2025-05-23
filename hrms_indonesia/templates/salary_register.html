@@ -111,15 +111,16 @@
     <div style="font-size: 10px; margin-top: 10px; font-weight: bold;">Total Jumlah Pegawai : {{ data|length - 1 }}</div>
     <table style="width: 50%; margin-top: 10px; border: none;">
         <tr>
+            {% for chief in chief_employees %}
             <td style="border: none; ">
                 <table style="border: none; ">
                     <tr><td style="border: none; text-align: left;">Menyetujui</td></tr>
                     <tr><td style="height: 60px; border: none; "></td></tr>
-                    <tr><td style="border: none; text-align: left; font-weight: bold;">RACHMAT HAMDANI</td></tr>
-                    <tr><td style="border: none; text-align: left;">Direktur Utama</td></tr>
+                    <tr><td style="border: none; text-align: left; font-weight: bold;">{{ chief.employee_name}}</td></tr>
+                    <tr><td style="border: none; text-align: left;">{{ chief.designation }}</td></tr>
                 </table>
             </td>
-            <td style="border: none;">
+            <!-- <td style="border: none;">
                 <table style="border: none;">
                     <tr><td style="border: none; text-align: left;">Mengetahui</td></tr>
                     <tr><td style="height: 60px; border: none; text-align: left;"></td></tr>
@@ -134,7 +135,8 @@
                     <tr><td style="border: none; text-align: left; font-weight: bold;">RAHADIAN TIKIE R</td></tr>
                     <tr><td style="border: none; text-align: left;">Manager SDMU</td></tr>
                 </table>
-            </td>
+            </td> -->
+            {% endfor %}
         </tr>
     </table>
     
