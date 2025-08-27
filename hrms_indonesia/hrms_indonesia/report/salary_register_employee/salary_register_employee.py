@@ -81,6 +81,19 @@ def execute(filters=None):
 
 		data.append(row)
 
+	# Sorting by basic_salary
+	basic_salary_fieldname = "basic_salary" 
+	data.sort(key=lambda x: x.get(basic_salary_fieldname, 0), reverse=True)
+
+	# Hide columns that are empty
+	all_fieldnames = [col["fieldname"] for col in columns]
+
+	for field in all_fieldnames:
+		if all(not row.get(field) for row in data):
+			columns = [col for col in columns if col["fieldname"] != field]
+			for row in data:
+				row.pop(field, None)
+
 	return columns, data
 
 
